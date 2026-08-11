@@ -79,7 +79,7 @@ router.get("/subject/:subjectId", async (req: Request, res: Response) => {
       (auth as any).sessionClaims?.name
     );
 
-    const subjectId = req.params.subjectId;
+    const subjectId = req.params.subjectId as string;
 
     // Verify subject belongs to user
     const subject = await db.subject.findFirst({
@@ -177,7 +177,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const id = req.params.id;
+    const id = req.params.id as string;
 
     const user = await getOrCreateUser(
       auth.userId,
