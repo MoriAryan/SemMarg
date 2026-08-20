@@ -25,7 +25,7 @@ export function StickyNote() {
     const active: QuickTask[] = [];
     const archived: QuickTask[] = [];
 
-    quickTasks.forEach((task) => {
+    quickTasks.forEach((task: QuickTask) => {
       if (!task.completed || isToday(task.completedAt)) {
         active.push(task);
       } else {
@@ -69,7 +69,7 @@ export function StickyNote() {
 
   const handleToggle = async (id: string, completed: boolean) => {
     // Optimistic UI
-    const updated = quickTasks.map((t) =>
+    const updated = quickTasks.map((t: QuickTask) =>
       t.id === id ? { ...t, completed: !completed, completedAt: !completed ? new Date().toISOString() : null } : t
     );
     setQuickTasksOptimistic(updated);
@@ -84,7 +84,7 @@ export function StickyNote() {
   };
 
   const handleDelete = async (id: string) => {
-    setQuickTasksOptimistic(quickTasks.filter((t) => t.id !== id));
+    setQuickTasksOptimistic(quickTasks.filter((t: QuickTask) => t.id !== id));
     try {
       await deleteQuickTask(id);
       refreshQuickTasks();
