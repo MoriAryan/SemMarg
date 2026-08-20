@@ -35,7 +35,7 @@ function AuthenticatedLayout() {
       <div className="min-h-screen flex flex-col">
         <AppHeader onNewTask={() => setIsTaskFormOpen(true)} />
 
-        <main className="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 md:pb-12">
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 md:pb-12">
           <Outlet context={{ openTaskForm: () => setIsTaskFormOpen(true) }} />
         </main>
 
