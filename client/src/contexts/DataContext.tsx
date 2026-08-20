@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
-import { getTasks, getSubjects, getCompletedTasks, getAttendanceSummary, type Task, type Subject, type CompletedSubject, type AttendanceSummary } from "@/lib/api";
+import { getTasks, getSubjects, getCompletedTasks, getAttendanceSummary, getQuickTasks, type Task, type Subject, type CompletedSubject, type AttendanceSummary, type QuickTask } from "@/lib/api";
 
 interface DataContextType {
   tasks: Task[];
@@ -11,9 +11,11 @@ interface DataContextType {
   refreshSubjects: () => Promise<void>;
   refreshCompleted: () => Promise<void>;
   refreshAttendance: () => Promise<void>;
+  refreshQuickTasks: () => Promise<void>;
   refreshAll: () => Promise<void>;
   setTasksOptimistic: (tasks: Task[]) => void;
   setSubjectsOptimistic: (subjects: Subject[]) => void;
+  setQuickTasksOptimistic: (quickTasks: QuickTask[]) => void;
 }
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -23,6 +25,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [completedSubjects, setCompletedSubjects] = useState<CompletedSubject[]>([]);
   const [attendanceSummary, setAttendanceSummary] = useState<AttendanceSummary[]>([]);
+  const [quickTasks, setQuickTasks] = useState<QuickTask[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refreshTasks = useCallback(async () => {
@@ -61,16 +64,26 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const refreshQuickTasks = useCallback(async () => {
+    try {
+      const data = await getQuickTasks();
+      setQuickTasks(data);
+    } catch (err) {
+      console.error("Failed to fetch quick tasks", err);
+    }
+  }, []);
+
   const refreshAll = useCallback(async () => {
     setLoading(true);
     await Promise.all([
       refreshTasks(),
       refreshSubjects(),
       refreshCompleted(),
-      refreshAttendance()
+      refreshAttendance(),
+      refreshQuickTasks()
     ]);
     setLoading(false);
-  }, [refreshTasks, refreshSubjects, refreshCompleted, refreshAttendance]);
+  }, [refreshTasks, refreshSubjects, refreshCompleted, refreshAttendance, refreshQuickTasks]);
 
   // Initial fetch
   useEffect(() => {
@@ -86,20 +99,27 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setSubjects(newSubjects);
   }, []);
 
+  const setQuickTasksOptimistic = useCallback((newQuickTasks: QuickTask[]) => {
+    setQuickTasks(newQuickTasks);
+  }, []);
+
   return (
     <DataContext.Provider value={{ 
       tasks, 
       subjects, 
       completedSubjects, 
       attendanceSummary,
+      quickTasks,
       loading, 
       refreshTasks, 
       refreshSubjects, 
       refreshCompleted, 
       refreshAttendance,
+      refreshQuickTasks,
       refreshAll,
       setTasksOptimistic,
-      setSubjectsOptimistic
+      setSubjectsOptimistic,
+      setQuickTasksOptimistic
     }}>
       {children}
     </DataContext.Provider>

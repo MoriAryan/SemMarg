@@ -63,6 +63,15 @@ export interface Task {
   updatedAt: string;
 }
 
+export interface QuickTask {
+  id: string;
+  content: string;
+  completed: boolean;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CompletedSubject extends Subject {
   tasks: { id: string; name: string; completedAt: string }[];
 }
@@ -144,6 +153,32 @@ export async function toggleTask(id: string): Promise<Task> {
 
 export async function deleteTask(id: string): Promise<void> {
   await fetchWithAuth(`/tasks/${id}`, { method: "DELETE" });
+}
+
+// ==========================================
+// Quick Tasks API
+// ==========================================
+
+export async function getQuickTasks(): Promise<QuickTask[]> {
+  const res = await fetchWithAuth("/quick-tasks");
+  return res.json();
+}
+
+export async function createQuickTask(data: { content: string }): Promise<QuickTask> {
+  const res = await fetchWithAuth("/quick-tasks", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+export async function toggleQuickTask(id: string): Promise<QuickTask> {
+  const res = await fetchWithAuth(`/quick-tasks/${id}`, { method: "PATCH" });
+  return res.json();
+}
+
+export async function deleteQuickTask(id: string): Promise<void> {
+  await fetchWithAuth(`/quick-tasks/${id}`, { method: "DELETE" });
 }
 
 // ==========================================

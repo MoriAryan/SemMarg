@@ -6,6 +6,7 @@ import { clerkMiddleware } from "@clerk/express";
 import subjectsRouter from "./routes/subjects.js";
 import tasksRouter from "./routes/tasks.js";
 import attendanceRouter from "./routes/attendance.js";
+import quickTasksRouter from "./routes/quick-tasks.js";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use(clerkMiddleware());
 // Routes
 app.use("/api/subjects", subjectsRouter);
 app.use("/api/tasks", tasksRouter);
+app.use("/api/quick-tasks", quickTasksRouter);
 app.use("/api/attendance", attendanceRouter);
 
 // Health check

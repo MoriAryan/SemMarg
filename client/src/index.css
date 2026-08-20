@@ -52,4 +52,15 @@
   .glass-panel-light {
     @apply bg-white/60 backdrop-blur-xl border border-black/5 shadow-xl;
   }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(202, 138, 4, 0.4);
+    border-radius: 4px;
+  }
 }

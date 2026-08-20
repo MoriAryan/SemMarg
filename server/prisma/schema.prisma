@@ -15,6 +15,7 @@ model User {
   subjects   Subject[]
   tasks      Task[]
   attendance Attendance[]
+  quickTasks QuickTask[]
   createdAt  DateTime     @default(now())
 }
 
@@ -64,5 +65,16 @@ model Attendance {
 enum SubjectType {
   LAB
   TUTORIAL
+}
+
+model QuickTask {
+  id          String    @id @default(cuid())
+  content     String
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
