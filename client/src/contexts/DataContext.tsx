@@ -6,6 +6,7 @@ interface DataContextType {
   subjects: Subject[];
   completedSubjects: CompletedSubject[];
   attendanceSummary: AttendanceSummary[];
+  quickTasks: QuickTask[];
   loading: boolean;
   refreshTasks: () => Promise<void>;
   refreshSubjects: () => Promise<void>;
