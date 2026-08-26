@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { getSubjectAttendance, markAttendance, deleteAttendance, type AttendanceRecord, type Subject } from "@/lib/api";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { getAttendanceMargin } from "@/lib/utils";
 
 interface AttendanceDetailProps {
   subjectId: string;
@@ -75,8 +76,14 @@ export function AttendanceDetail({ subjectId, onBack, onUpdate }: AttendanceDeta
     );
   }
 
+  const totalClasses = records.length;
+  const totalPresent = records.filter(r => r.status === "P").length;
+  const percentage = totalClasses === 0 ? 0 : Math.round((totalPresent / totalClasses) * 100);
+  const isGood = percentage >= 75;
+  const margin = getAttendanceMargin(totalPresent, totalClasses);
+
   return (
-    <div className="w-full animate-in slide-in-from-right-4 duration-300">
+    <div className="w-full animate-in slide-in-from-right-4 duration-300 pb-20">
       <button 
         onClick={onBack}
         className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-6 font-medium"
@@ -84,9 +91,34 @@ export function AttendanceDetail({ subjectId, onBack, onUpdate }: AttendanceDeta
         <ArrowLeft size={18} /> Back to Dashboard
       </button>
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-3 h-8 rounded-full" style={{ backgroundColor: subject.color }} />
-        <h2 className="text-xl font-bold text-white tracking-tight drop-shadow-sm">{subject.name}</h2>
+      <div className="flex flex-col gap-2 mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-3 h-8 rounded-full" style={{ backgroundColor: subject.color }} />
+          <h2 className="text-xl font-bold text-white tracking-tight drop-shadow-sm flex-1">{subject.name}</h2>
+          {totalClasses > 0 && (
+            <div className={`px-3 py-1 rounded-md text-sm font-bold ${
+              isGood ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                     : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+            }`}>
+              {percentage}%
+            </div>
+          )}
+        </div>
+        
+        {totalClasses > 0 && (
+          <div className="pl-6 mt-1">
+            {margin.type === 'need_present' && (
+              <p className="text-sm font-medium text-rose-400/80">
+                Attend next <span className="font-bold text-rose-400">{margin.count}</span> classes to reach 75%
+              </p>
+            )}
+            {margin.type === 'can_absent' && (
+              <p className="text-sm font-medium text-emerald-400/80">
+                You can skip <span className="font-bold text-emerald-400">{margin.count}</span> classes safely
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="glass-panel p-5 rounded-2xl mb-8">
